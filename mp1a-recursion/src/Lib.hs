@@ -161,7 +161,10 @@ intersect (x:xs) (y:ys)
 
 -- don't forget to put the type declaration or you will lose points!
 powerset :: Ord a => [a] -> [[a]]
-powerset = undefined
+powerset [] = [[]]
+powerset (x:xs) =
+  let p = powerset xs
+    in union p [add x s | s <- p]
 
 --- Higher Order Functions
 --- ----------------------
