@@ -27,57 +27,100 @@ import qualified Prelude as P
 --- ### mytake
 
 -- don't forget to put the type declaration or you will lose points!
-mytake = undefined
+mytake :: Int -> [a] -> [a]
+mytake a [] = []
+mytake a (x:xs) | a <= 0 = []
+                | otherwise =  x:(mytake (a-1) xs)
 
 --- ### mydrop
 
 -- don't forget to put the type declaration or you will lose points!
-mydrop = undefined
+mydrop :: Int -> [a] -> [a]
+mydrop a [] = []
+mydrop a (x:xs) | a <= 0 = (x:xs)
+                | otherwise =  (mydrop (a-1) xs)
 
 --- ### rev
 
 -- don't forget to put the type declaration or you will lose points!
-rev = undefined
+rev_helper :: [a] -> [a] -> [a]
+rev_helper retval [] = retval
+rev_helper retval (y:ys) = rev_helper (y:retval) ys
+
+rev :: [a] -> [a]
+rev [] = []
+rev (x:xs) = rev_helper [] (x:xs)
 
 --- ### app
 
 -- don't forget to put the type declaration or you will lose points!
-app = undefined
+app :: [a] -> [a] -> [a]
+app [] [] = []
+app x [] = x
+app [] y = y
+app (x:xs) y = x:(app xs y)
 
 --- ### inclist
 
 -- don't forget to put the type declaration or you will lose points!
-inclist = undefined
+inclist :: Num a => [a] -> [a]
+inclist [] = [] --base case first
+inclist (x:xs) = x + 1 : inclist (xs)
 
 --- ### sumlist
 
 -- don't forget to put the type declaration or you will lose points!
-sumlist = undefined
+sumlist :: Num a => [a] -> a
+sumlist [] = 0
+sumlist (x:xs) = x + sumlist xs
 
 --- ### myzip
 
 -- don't forget to put the type declaration or you will lose points!
-myzip = undefined
+myzip :: [a] -> [b] -> [(a, b)]
+myzip [] [] = []
+myzip x [] = []
+myzip [] y = []
+
+myzip (x:xs) (y:ys) = ( (x, y)  : myzip (xs) (ys) )
 
 --- ### addpairs
 
 -- don't forget to put the type declaration or you will lose points!
-addpairs = undefined
+myzip_help :: [a] -> [a] -> [(a, a)]
+myzip_help [] [] = []
+myzip_help x [] = []
+myzip_help [] y = []
+myzip_help (x:xs) (y:ys) = ( (x, y)  : myzip_help (xs) (ys) )
+
+actualadd :: (Num a) => [(a, a)] -> [a]
+actualadd [] = []
+actualadd (x:xs) = ( fst(x) + snd(x) : actualadd (xs) ) 
+
+addpairs :: (Num a) => [a] -> [a] -> [a]
+addpairs [] [] = []
+addpairs x [] = []
+addpairs [] y = []
+addpairs (x:xs) (y:ys) = actualadd(myzip_help (x:xs) (y:ys))
 
 --- ### ones
 
 -- don't forget to put the type declaration or you will lose points!
-ones = undefined
+ones :: [Integer]
+ones = 1:ones
 
 --- ### nats
 
 -- don't forget to put the type declaration or you will lose points!
-nats = undefined
+nats :: [Integer]
+nats = 0:inclist(nats)
 
 --- ### fib
 
 -- don't forget to put the type declaration or you will lose points!
-fib = undefined
+
+fib :: [Integer]
+fib = 0:1:1:addpairs (tail(fib)) ( tail(tail(fib)) )
 
 --- Set Theory
 --- ----------
@@ -85,21 +128,39 @@ fib = undefined
 --- ### add
 
 -- don't forget to put the type declaration or you will lose points!
-add = undefined
+add :: Ord a => a -> [a] -> [a]
+add x [] = [x]
+add x (y:ys) | x < y = x:y:ys
+             | x == y = x:ys
+             | otherwise = y:add x ys
 
 --- ### union
 
 -- don't forget to put the type declaration or you will lose points!
-union = undefined
+union :: Ord a => [a] -> [a] -> [a]
+union [] [] = []
+union x [] = x
+union [] y = y 
+union (x:xs) (y:ys) | x < y = x:union (xs) (y:ys)
+                    | x == y = x:union (xs) (ys)
+                    | otherwise = y:union (x:xs) (ys) 
 
 --- ### intersect
 
 -- don't forget to put the type declaration or you will lose points!
-intersect = undefined
+intersect :: Ord a => [a] -> [a] -> [a]
+intersect [] [] = []
+intersect x [] = []
+intersect [] y = []
+intersect (x:xs) (y:ys)
+    | x == y = x:intersect (xs) (ys)
+    | x < y = intersect (xs) (y:ys)
+    | y < x = intersect (x:xs) (ys)
 
 --- ### powerset
 
 -- don't forget to put the type declaration or you will lose points!
+powerset :: Ord a => [a] -> [[a]]
 powerset = undefined
 
 --- Higher Order Functions
@@ -108,9 +169,15 @@ powerset = undefined
 --- ### inclist'
 
 -- don't forget to put the type declaration or you will lose points!
-inclist' = undefined
+inc x = x+1
+
+inclist' :: Num a => [a] -> [a]
+inclist' = P.map inc
 
 --- ### sumlist'
 
 -- don't forget to put the type declaration or you will lose points!
-sumlist' = undefined
+plus a b = a+b
+
+sumlist' :: (Num a) => [a] -> a
+sumlist' = P.foldr (\a b -> plus a b) 0
